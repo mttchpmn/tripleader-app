@@ -29,20 +29,44 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  var trips = <Trip>[];
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    Widget page;
+
+    switch (_selectedIndex) {
+      case 0:
+        page = TripFeedPage();
+        break;
+      case 1:
+        page = Placeholder();
+        break;
+      case 2:
+        page = Placeholder();
+        break;
+      case 3:
+        page = Placeholder();
+        break;
+      case 4:
+        page = Placeholder();
+        break;
+      default:
+        throw UnimplementedError("No page created for index: $_selectedIndex");
+
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Text("Hello world"),
-      ),
-      bottomNavigationBar:  BottomNavigationBar(
+      body: Container(child: page),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
         onTap: (int index) {
-          print('Tapped index: $index');
+          setState(() {
+            _selectedIndex = index;
+          });
         },
         selectedItemColor: Colors.deepOrange, // TODO - Fix coloring here
         unselectedItemColor: Colors.black45,
@@ -55,6 +79,14 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
+  }
+}
+
+class TripFeedPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Text("Trip Feed page");
   }
 }
 
