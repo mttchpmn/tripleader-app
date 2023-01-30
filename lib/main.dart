@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,11 +11,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'TripLeader',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)),
-      home: const MainPage(title: 'TripLeader'),
+    final HttpLink httpLink = HttpLink("https://localhost:7265/graphql");
+    ValueNotifier<GraphQLClient> client =
+        ValueNotifier(GraphQLClient(link: httpLink, cache: GraphQLCache()));
+
+    return GraphQLProvider(
+      client: client,
+      child: MaterialApp(
+        title: 'TripLeader',
+        theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange)),
+        home: const MainPage(title: 'TripLeader'),
+      ),
     );
   }
 }
@@ -53,7 +61,6 @@ class _MainPageState extends State<MainPage> {
         break;
       default:
         throw UnimplementedError("No page created for index: $_selectedIndex");
-
     }
 
     return Scaffold(
@@ -68,7 +75,8 @@ class _MainPageState extends State<MainPage> {
             _selectedIndex = index;
           });
         },
-        selectedItemColor: Colors.deepOrange, // TODO - Fix coloring here
+        selectedItemColor: Colors.deepOrange,
+        // TODO - Fix coloring here
         unselectedItemColor: Colors.black45,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
@@ -82,11 +90,56 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class TripFeedPage extends StatelessWidget{
+class TripFeedPage extends StatelessWidget {
+  final _getTripPreviewsQuery = '''
+  query getTripPreviews {
+  tripPreviews {
+    key,
+    title,
+    leaderKey,
+    departureDate,
+    completionDate,
+    route,
+    details,
+    activityType,
+    abilityLevel,
+    requiredEquipment,
+    additionalInformation
+  }
+}
+  ''';
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Text("Trip Feed page");
+    return Query(
+      options: QueryOptions(
+        document: gql(_getTripPreviewsQuery),
+        pollInterval: const Duration(seconds: 10),
+      ),
+      builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }) {
+        if (result.hasException) {
+          return Text(result.exception.toString());
+        }
+
+        if (result.isLoading) {
+          return const Text('Loading');
+        }
+
+        List? tripPreviews = result.data?['tripPreviews'];
+
+        if (tripPreviews == null) {
+          return const Text('No trip previews');
+        }
+
+        return ListView.builder(
+            itemCount: tripPreviews.length,
+            itemBuilder: (context, index) {
+              final tripPreview = tripPreviews[index];
+
+              return Text(tripPreview['title'] ?? '');
+            });
+      },
+    );
   }
 }
 
