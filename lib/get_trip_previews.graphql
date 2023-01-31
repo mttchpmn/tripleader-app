@@ -1,0 +1,15 @@
+  query getTripPreviews {
+  tripPreviews {
+    key,
+    title,
+    leaderKey,
+    departureDate,
+    completionDate,
+    route,
+    details,
+    activityType,
+    abilityLevel,
+    requiredEquipment,
+    additionalInformation
+  }
+}

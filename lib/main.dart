@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
+import 'get_trip_previews.graphql.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -116,7 +118,8 @@ class TripFeedPage extends StatelessWidget {
         document: gql(_getTripPreviewsQuery),
         pollInterval: const Duration(seconds: 10),
       ),
-      builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }) {
+      builder: (QueryResult result,
+          {VoidCallback? refetch, FetchMore? fetchMore}) {
         if (result.hasException) {
           return Text(result.exception.toString());
         }
@@ -125,7 +128,10 @@ class TripFeedPage extends StatelessWidget {
           return const Text('Loading');
         }
 
-        List? tripPreviews = result.data?['tripPreviews'];
+        final previews = Query$getTripPreviews.fromJson(
+            result.data!); // TODO - Handle data being null
+
+        var tripPreviews = previews.tripPreviews;
 
         if (tripPreviews == null) {
           return const Text('No trip previews');
@@ -135,11 +141,28 @@ class TripFeedPage extends StatelessWidget {
             itemCount: tripPreviews.length,
             itemBuilder: (context, index) {
               final tripPreview = tripPreviews[index];
+              final foo = tripPreviews[index];
 
-              return Text(tripPreview['title'] ?? '');
+              return TripCard(tripPreview: foo);
             });
       },
     );
+  }
+}
+
+class TripCard extends StatelessWidget {
+  const TripCard({
+    super.key,
+    required this.tripPreview,
+  });
+
+  final Query$getTripPreviews$tripPreviews tripPreview;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: Column(
+            children: [Text(tripPreview.title), Text(tripPreview.route)]));
   }
 }
 
@@ -167,9 +190,9 @@ class NavRow extends StatelessWidget {
   }
 }
 
-class Trip {
+class TripPreview {
   String title;
   String details;
 
-  Trip(this.title, this.details);
+  TripPreview(this.title, this.details);
 }

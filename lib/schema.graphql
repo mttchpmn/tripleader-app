@@ -1,0 +1,226 @@
+type Query {
+  """
+  Gets publicly available trip previews
+  """
+  tripPreviews: [TripPreview!]!
+
+  """
+  Gets full detail for a trip
+  """
+  tripDetail(tripKey: UUID!): Trip
+
+  """
+  Gets public preview detail for a trip
+  """
+  tripPreview(tripKey: UUID!): TripPreview
+
+  """
+  Gets details of a member
+  """
+  member(memberKey: UUID!): MemberPreview!
+
+  """
+  Gets details of the currently logged in member
+  """
+  currentMember(authId: String!): Member!
+}
+
+type Mutation {
+  """
+  Creates a new instance of a trip for the authenticated member
+  """
+  createTrip(input: CreateTripInput!): CreateTripPayload!
+
+  """
+  Adds a member to a trip
+  """
+  approveTripJoinRequest(
+    input: ApproveTripJoinRequestInput!
+  ): ApproveTripJoinRequestPayload!
+
+  """
+  Requests to join a trip
+  """
+  createTripJoinRequest(
+    input: CreateTripJoinRequestInput!
+  ): CreateTripJoinRequestPayload!
+
+  """
+  Updates member details
+  """
+  updateMember(input: UpdateMemberInput!): UpdateMemberPayload!
+}
+
+type TripError implements Error {
+  message: String!
+}
+
+interface Error {
+  message: String!
+}
+
+type Member {
+  id: Int!
+  authId: String!
+  key: UUID!
+  firstName: String!
+  lastName: String!
+  emailAddress: String!
+  dateOfBirth: DateTime!
+  profileImageUrl: String!
+  bio: String!
+  activities: [Activity!]!
+}
+
+type MemberPreview {
+  key: UUID!
+  firstName: String!
+  lastName: String!
+  profileImageUrl: String!
+  bio: String!
+  activities: [Activity!]!
+}
+
+scalar UUID
+
+type Trip {
+  id: Int!
+  key: UUID!
+  title: String!
+  status: TripStatus!
+  leaderKey: UUID!
+  members: [Member!]!
+  departureDate: DateTime!
+  completionDate: DateTime!
+  sarTime: DateTime!
+  route: String!
+  details: String!
+  activityType: ActivityType!
+  abilityLevel: AbilityLevel!
+  requiredEquipment: [String!]!
+  additionalInformation: String!
+}
+
+type TripPreview {
+  key: UUID!
+  title: String!
+  leaderKey: UUID!
+  departureDate: DateTime!
+  completionDate: DateTime!
+  route: String!
+  details: String!
+  activityType: ActivityType!
+  abilityLevel: AbilityLevel!
+  requiredEquipment: [String!]!
+  additionalInformation: String!
+}
+
+type AuthorizeDirective {
+  policy: String
+  roles: [String!]
+  apply: ApplyPolicy!
+}
+
+input TripInput {
+  title: String!
+  departureDate: DateTime!
+  completionDate: DateTime!
+  sarTime: DateTime!
+  route: String!
+  details: String!
+  activityType: ActivityType!
+  abilityLevel: AbilityLevel!
+  requiredEquipment: [String!]!
+  additionalInformation: String!
+}
+
+input UpdateMemberInput {
+  firstName: String!
+  lastName: String!
+  emailAddress: String!
+  dateOfBirth: DateTime!
+  profileImageUrl: String!
+  bio: String!
+  activities: [ActivityInput!]!
+}
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+}
+
+enum AbilityLevel {
+  DO_NOT_USE
+  NOVICE
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum ActivityType {
+  DO_NOT_USE
+  HIKING
+  RUNNING
+  MOUNTAIN_BIKING
+  ROAD_BIKING
+  SEA_KAYAKING
+}
+
+enum TripStatus {
+  DO_NOT_USE
+  PENDING
+  IN_PROGRESS
+  OVERDUE
+  COMPLETED
+}
+
+type Activity {
+  type: ActivityType!
+  abilityLevel: AbilityLevel!
+}
+
+input ActivityInput {
+  type: ActivityType!
+  abilityLevel: AbilityLevel!
+}
+
+input CreateTripInput {
+  input: TripInput!
+}
+
+type CreateTripPayload {
+  trip: Trip
+}
+
+input ApproveTripJoinRequestInput {
+  memberKey: UUID!
+  tripKey: UUID!
+}
+
+union ApproveTripJoinRequestError = TripError
+
+type ApproveTripJoinRequestPayload {
+  trip: Trip
+  errors: [ApproveTripJoinRequestError!]
+}
+
+input CreateTripJoinRequestInput {
+  tripKey: UUID!
+}
+
+union CreateTripJoinRequestError = TripError
+
+type CreateTripJoinRequestPayload {
+  trip: Trip
+  errors: [CreateTripJoinRequestError!]
+}
+
+type UpdateMemberPayload {
+  member: Member
+}
