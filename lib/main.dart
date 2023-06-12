@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:tripleader/views/create_trip_view.dart';
 
 import 'get_trip_previews.graphql.dart';
 
@@ -53,7 +54,7 @@ class _MainPageState extends State<MainPage> {
         page = Placeholder();
         break;
       case 2:
-        page = Placeholder();
+        page = CreateTripView();
         break;
       case 3:
         page = Placeholder();
@@ -66,9 +67,6 @@ class _MainPageState extends State<MainPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: Container(child: page),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
