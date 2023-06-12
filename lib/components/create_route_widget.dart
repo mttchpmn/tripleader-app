@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:tripleader/models/route_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CreateRouteWidget extends StatefulWidget {
   const CreateRouteWidget(
       {super.key,
       required LatLng initialPosition,
-      required ValueChanged<Route> onRouteCreated})
+      required ValueChanged<TripRoute> onRouteCreated})
       : _initialPosition = initialPosition,
         _onRouteCreated = onRouteCreated;
 
   final LatLng _initialPosition;
-  final ValueChanged<Route> _onRouteCreated;
+  final ValueChanged<TripRoute> _onRouteCreated;
 
   @override
   State<CreateRouteWidget> createState() => _CreateRouteWidgetState();
@@ -103,7 +104,13 @@ class _CreateRouteWidgetState extends State<CreateRouteWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(onPressed: () {}, child: const Text("Create Route"))
+              ElevatedButton(onPressed: () {
+                var route = TripRoute(waypoints, distanceKm);
+
+                widget._onRouteCreated(route);
+                Navigator.pop(context);
+
+              }, child: const Text("Create Route"))
             ],
           )
         ],

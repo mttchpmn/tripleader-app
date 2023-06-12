@@ -1,8 +1,8 @@
 import 'package:latlong2/latlong.dart';
 
-class Route {
+class TripRoute {
   List<LatLng> coordinates;
   double distance;
 
-  Route(this.coordinates, this.distance);
+  TripRoute(this.coordinates, this.distance);
 }
