@@ -24,4 +24,9 @@ class CreateTripFormData {
       this.activity,
       this.abilityLevel,
       this.additionalInformation);
+
+  @override
+  String toString() {
+    return "Title: $title\n Route: ${route.distance} Km\n Details: $details\n tripDate: ${tripDate.toIso8601String()}\n Completion Date: ${completionDate?.toIso8601String()}\n SAR Time: $sarTime\n Activity: ${activity.name}\n Ability Level: ${abilityLevel.name}\n Additional Info: $additionalInformation\n";
+  }
 }
