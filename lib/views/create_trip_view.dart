@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:tripleader/components/create_route_widget.dart';
 import 'package:tripleader/forms/create_trip_form.dart';
-
-enum ActivityType { Hiking, SeaKayaking }
-
-enum AbilityLevel { Novice, Beginner, Intermediate, Advanced, Expert }
 
 class CreateTripView extends StatefulWidget {
   @override
@@ -13,30 +7,37 @@ class CreateTripView extends StatefulWidget {
 }
 
 class _CreateTripViewState extends State<CreateTripView> {
-  void _openCreateRouteWidget(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreateRouteWidget(initialPosition: LatLng(-45.019022, 168.741764), onRouteCreated: (route) {},),
-      ),
-    );
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Trip'),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
-        child: CreateTripForm(),
+        child: CreateTripForm(
+          onFormSubmit: (formData) {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Trip Created'),
+                  content: Text(formData.toString()),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: CreateTripView(),
-  ));
 }
