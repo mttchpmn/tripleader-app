@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tripleader/helpers/enum_helpers.dart';
 
 class DropdownInputField<T extends Enum> extends StatelessWidget {
   final IconData icon;
@@ -21,7 +22,7 @@ class DropdownInputField<T extends Enum> extends StatelessWidget {
     var availableItems = items
         .map((e) => DropdownMenuItem(
               value: e.index,
-              child: Text(e.name),
+              child: Text(EnumHelpers.toTitleCase(e.name)),
             ))
         .toList();
 

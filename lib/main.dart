@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final HttpLink httpLink = HttpLink("https://localhost:7265/graphql");
+    // final HttpLink httpLink = HttpLink("https://localhost:7265/graphql");
+    final HttpLink httpLink = HttpLink("http://10.0.2.2:5229/graphql");
     ValueNotifier<GraphQLClient> client =
         ValueNotifier(GraphQLClient(link: httpLink, cache: GraphQLCache()));
 
